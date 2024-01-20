@@ -303,7 +303,7 @@ def run():
         # scheduler.run()
 
 def temperature_on_matrix(canvas,temperature_font, temperature_colour):
-    graphics.DrawText(canvas, temperature_font, 13, 57, temperature_colour, extTemp)
+    graphics.DrawText(canvas, temperature_font, 11, 57, temperature_colour, extTemp)
 
 def date_on_matrix(canvas,calendar_font, calendar_colour):
     curernt_date = date_collector()
