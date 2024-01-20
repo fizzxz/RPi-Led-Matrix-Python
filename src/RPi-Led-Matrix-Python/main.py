@@ -2,7 +2,7 @@
 import time
 from datetime import datetime
 import json
-from temper import Temper, USBList
+from temper.temper import Temper, USBList
 import threading
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
 from flask import Flask, Response, request, render_template, jsonify
@@ -174,8 +174,6 @@ def date_collector():
 @app.route("/")
 def index():
     return render_template("timer.html")
-
-
 
 
 @app.route('/start_pomodoro_sequence', methods=['POST'])
