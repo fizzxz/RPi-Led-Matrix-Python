@@ -5,12 +5,12 @@ t = Temper()
 
 def init():
     global roomTemp
-    roomTemp = "0.0°C"
+    roomTemp = "0.00°C"
 
 def updateTempThread():
     global roomTemp
     while True:
-        roomTemp = updateRoomTemp()
+        roomTemp = updateRoomTemp()     
         print("Updated shared value:", roomTemp)
         time.sleep(60)
 
@@ -29,5 +29,6 @@ def updateRoomTemp():
     
     thermometerData = dataResult
     roomTemp = str(thermometerData[0]["external temperature"])
+    roomTemp = "%.2f" % float(roomTemp)
     roomTemp = roomTemp + "°C"
     return roomTemp
