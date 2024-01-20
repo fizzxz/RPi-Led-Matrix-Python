@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- http://192.168.50.127:5000 -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            margin: 20px;
+        }
+
+        #startBreakSection {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+        }
+
+        #startTimerBtn,
+        #removeTimerBtn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+
+        #breakTimerBtn,
+        #resetBreakBtn {
+            background-color: #008CBA;
+            color: white;
+            border: none;
+        }
+
+        #statusDisplay {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Pomodoro Timer</h1>
+    <div id="statusDisplay"></div>
+    <button id="pomodoroBtn" onclick="
+startTimer('start_pomodoro')
+//<!-- updateTimerDisplay() -->
+">
+        Start Pomodoro
+    </button>
+    <div id="startSequenceSection">
+        <button id="startSequenceBtn" onclick="startPomodoroSequence()">Start Pomodoro Sequence</button>
+    </div>
+    <button id="breakBtn" onclick="
+startTimer('start_break');
+//<!-- updateTimerDisplay()-->
+   "> Start Break
+    </button>
+    <button id="pauseBtn" onclick="pauseTimer()">Pause Timer</button>
+    <button id="resumeBtn" onclick="resumeTimer()">Resume Timer</button>
+    <button id="removeTimerBtn" onclick="removeTimer()">Remove Timer</button>
+    <div id="timerDisplay"></div>
+
+    <script>
+
+        var isTimerRunning = localStorage.getItem('isTimerRunning') === 'true';
+        var timerType = localStorage.getItem('timerType');
+        var remainingTime = parseInt(localStorage.getItem('remainingTime')) || 0;
+        window.onload = updateTimerDisplay()
+        function startPomodoroSequence() {
+            // Send a request to start the pomodoro sequence
+            fetch('http://192.168.50.127:5000/start_pomodoro_sequence', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.status);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+        function startTimer(endpoint) {
+            if (isTimerRunning) {
+                updateStatusDisplay('Timer is already running. Please wait for it to complete.');
+                return;
+            }
+
+            var duration = prompt("Enter timer duration in minutes:");
+
+            if (duration !== null && duration !== "") {
+                // Disable buttons during the timer
+                disableButtons();
+                fetch(`http://192.168.50.127:5000/${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'duration=' + duration,
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        updateStatusDisplay(data.status);
+                        isTimerRunning = true;
+                        updateTimerDisplay();
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function pauseTimer() {
+            if (isTimerRunning) {
+                fetch('http://192.168.50.127:5000/pause_timer', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => updateStatusDisplay(data.status))
+                    .catch(error => console.error('Error:', error));
+            } else {
+                updateStatusDisplay('No timer is running.');
+            }
+        }
+
+        function updateTimerDisplay() {
+            var timerDisplay = document.getElementById('timerDisplay');
+
+            var intervalId = setInterval(function () {
+
+                fetch('http://192.168.50.127:5000/get_timer_state')
+                    .then(response => response.json())
+                    .then(timerState => {
+                        var minutes = Math.floor(timerState.remaining_time / 60);
+                        var seconds = timerState.remaining_time % 60;
+                        disableButtons()
+                        if (timerState.paused) {
+                            timerDisplay.innerHTML = "Timer paused.";
+                            isTimerRunning = false;
+                        } else {
+                            timerDisplay.innerHTML = `Time remaining: ${minutes} minutes ${seconds} seconds`;
+                            isTimerRunning = true;
+                        }
+
+                        if (timerState.remaining_time <= 0) {
+                            clearInterval(intervalId);
+                            timerDisplay.innerHTML = "No running timer.";
+                            isTimerRunning = false;
+                            enableButtons();
+                            return;
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+
+            }, 1000);
+
+        }
+        function updateStatusDisplay(message) {
+            var statusDisplay = document.getElementById('statusDisplay');
+            statusDisplay.innerHTML = message;
+        }
+        function resumeTimer() {
+            if (isTimerRunning) {
+                updateStatusDisplay('Timer is already running. Please wait for it to complete.');
+                return;
+            }
+
+            fetch('http://192.168.50.127:5000/resume_timer', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    updateStatusDisplay(data.status);
+                    isTimerRunning = true;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        function removeTimer() {
+            // Send a request to remove the timer
+            fetch('http://192.168.50.127:5000/remove_timer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.status);
+                    isTimerRunning = false;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        function enableButtons() {
+            document.getElementById('pomodoroBtn').disabled = false;
+            document.getElementById('breakBtn').disabled = false;
+            document.getElementById('startSequenceBtn').disabled = false;
+            document.getElementById('pauseBtn').disabled = true;
+        }
+
+        function disableButtons() {
+            document.getElementById('pomodoroBtn').disabled = true;
+            document.getElementById('breakBtn').disabled = true;
+            document.getElementById('startSequenceBtn').disabled = true;
+            document.getElementById('pauseBtn').disabled = false;
+        }
+    </script>
+
+</body>
+
+</html>
