@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
 from pomodoro_timer import start_pomodoro_sequence,start_timer_thread
 import utilities
+import threading
 pomodoro_web_flask = Flask(__name__)
 CORS(pomodoro_web_flask)
 utilities.init()
@@ -14,8 +15,8 @@ def index():
 @pomodoro_web_flask.route('/start_pomodoro_sequence', methods=['POST'])
 def start_pomodoro_sequence_route():
     user_id = request.remote_addr  # Use the user's IP address as a simple identifier
-    print(user_id)
-    start_pomodoro_sequence(user_id)
+    timer_thread = threading.Thread(target=start_pomodoro_sequence,args=(user_id,))
+    timer_thread.start()  
     return jsonify({'status': 'Pomodoro sequence started.'})
 
 @pomodoro_web_flask.route("/start_pomodoro", methods=["POST"])
