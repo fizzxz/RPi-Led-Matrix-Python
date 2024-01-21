@@ -90,6 +90,7 @@ def matrix_display():
         canvas = matrix.SwapOnVSync(canvas)
 
 def temperature_on_matrix(canvas,temperature_font, temperature_colour):
+   
     graphics.DrawText(canvas, temperature_font, 11, 57, temperature_colour, thermometer.roomTemp)
 
 def date_on_matrix(canvas,calendar_font, calendar_colour):

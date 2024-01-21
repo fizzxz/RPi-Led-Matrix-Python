@@ -1,6 +1,6 @@
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
-from utilities import start_pomodoro_sequence
+from pomodoro_timer import start_pomodoro_sequence,start_timer_thread
 import utilities
 pomodoro_web_flask = Flask(__name__)
 CORS(pomodoro_web_flask)
@@ -16,18 +16,20 @@ def index():
 @pomodoro_web_flask.route('/start_pomodoro_sequence', methods=['POST'])
 def start_pomodoro_sequence_route():
     user_id = request.remote_addr  # Use the user's IP address as a simple identifier
+    print(user_id)
     start_pomodoro_sequence(user_id)
     return jsonify({'status': 'Pomodoro sequence started.'})
 
 @pomodoro_web_flask.route("/start_pomodoro", methods=["POST"])
 def start_pomodoro():
+    start_timer_thread()
     user_id = request.remote_addr  # Use the user's IP address as a simple identifier
     duration = int(request.form["duration"])
 
     if user_id not in utilities.user_timers:
         utilities.user_timers[user_id] = {
             "type": "pomodoro",
-            "remaining_time": duration * 60,
+            "remaining_time": duration * utilities.MINUTE,
             "paused": False,
         }
     print(utilities.user_timers)
@@ -36,6 +38,7 @@ def start_pomodoro():
 
 @pomodoro_web_flask.route("/start_break", methods=["POST"])
 def start_break():
+    start_timer_thread()
     user_id = request.remote_addr
     duration = int(request.form["duration"])
 
@@ -76,11 +79,11 @@ def resume_timer():
 @pomodoro_web_flask.route('/remove_timer', methods=['POST'])
 def remove_timer():
     user_id = request.remote_addr
+    timer_data = utilities.user_timers.get(user_id)
 
     # Remove the timer for the specified user
     if user_id in utilities.user_timers:
-        del utilities.user_timers[user_id]
-        utilities.pomodoro_state=False
+        timer_data["remaining_time"] = 0
         return jsonify({'status': 'Timer removed.'})
     else:
         return jsonify({'status': 'No active timer to remove.'})
@@ -91,5 +94,5 @@ def get_timer_state():
     timer_state = utilities.user_timers.get(
         user_id, {"type": "", "remaining_time": 0, "paused": False}
     )
-    print(timer_state)
+
     return jsonify(timer_state)
