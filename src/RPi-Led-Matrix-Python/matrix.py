@@ -3,8 +3,6 @@ from datetime import datetime
 import thermometer
 import utilities
 
-
-
 # set matrix options
 options = RGBMatrixOptions()
 # options.chain_length = 1
@@ -50,7 +48,6 @@ def time_collector():
     current_time = datetime.now().strftime("%X")
     return current_time
 
-
 def date_collector():
     current_date = datetime.today().strftime("%d/%m/%Y")
     return current_date
@@ -90,7 +87,6 @@ def matrix_display():
         canvas = matrix.SwapOnVSync(canvas)
 
 def temperature_on_matrix(canvas,temperature_font, temperature_colour):
-   
     graphics.DrawText(canvas, temperature_font, 11, 57, temperature_colour, thermometer.roomTemp)
 
 def date_on_matrix(canvas,calendar_font, calendar_colour):

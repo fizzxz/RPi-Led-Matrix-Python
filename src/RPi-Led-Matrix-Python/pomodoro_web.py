@@ -4,13 +4,11 @@ from pomodoro_timer import start_pomodoro_sequence,start_timer_thread
 import utilities
 pomodoro_web_flask = Flask(__name__)
 CORS(pomodoro_web_flask)
-
 utilities.init()
 
 @pomodoro_web_flask.route("/")
 def index():
     return render_template("timer.html")
-
 
 # Start the timer sequence when the button is pressed
 @pomodoro_web_flask.route('/start_pomodoro_sequence', methods=['POST'])
@@ -80,7 +78,6 @@ def resume_timer():
 def remove_timer():
     user_id = request.remote_addr
     timer_data = utilities.user_timers.get(user_id)
-
     # Remove the timer for the specified user
     if user_id in utilities.user_timers:
         timer_data["remaining_time"] = 0

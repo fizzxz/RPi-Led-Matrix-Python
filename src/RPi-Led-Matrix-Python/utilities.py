@@ -1,5 +1,3 @@
-
-
 def init():
     global user_timers
     global pomodoro_state

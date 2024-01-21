@@ -5,11 +5,8 @@ from pomodoro_timer import start_timer_thread
 from thermometer import updateTempThread
 from matrix import matrix_display
 
-
-
 # Main function
 if __name__ == "__main__":
-
     matrix_thread = threading.Thread(target=matrix_display)
     # Set the thread as a daemon
     matrix_thread.daemon = True 
