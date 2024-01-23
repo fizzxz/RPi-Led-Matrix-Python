@@ -1,5 +1,5 @@
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
-from datetime import datetime
+import datetime
 import thermometer
 import utilities
 
@@ -45,25 +45,25 @@ fonts = [
 ]
 
 def time_collector():
-    current_time = datetime.now().strftime("%X")
+    current_time = datetime.datetime.now().strftime("%X")
     return current_time
 
 def date_collector():
-    current_date = datetime.today().strftime("%d/%m/%Y")
+    current_date = datetime.datetime.today().strftime("%d/%m/%Y")
     return current_date
 
 def matrix_display():
     temperature_font = graphics.Font()
     temperature_font.LoadFont(fonts[6])
-    temperature_colour = graphics.Color(20, 220, 50)
+    # temperature_colour = graphics.Color(20, 220, 50)
+    temperature_colour = graphics.Color(215, 54, 101)
     
     time_font = graphics.Font()
     time_font.LoadFont(fonts[13])
-    time_colour = graphics.Color(77, 154, 77)
+    # time_colour = graphics.Color(77, 154, 77)
 
     calendar_font = graphics.Font()
     calendar_font.LoadFont(fonts[5])
-    calendar_colour = graphics.Color(200, 50, 50)
     
     pomodoro_font = graphics.Font()
     pomodoro_font.LoadFont(fonts[13])
@@ -79,6 +79,7 @@ def matrix_display():
     canvas = matrix.CreateFrameCanvas()
     while True:
         canvas.Clear()
+        time_colour,calendar_colour=change_colour()
         time_on_matrix(canvas,time_font, time_colour)
         date_on_matrix(canvas,calendar_font, calendar_colour)
         temperature_on_matrix(canvas,temperature_font, temperature_colour)
@@ -104,9 +105,60 @@ def pomodoro_on_matrix(canvas,font,colour):
 def break_time_on_matrix(canvas,font,colour):
     if utilities.pomodoro_state is None:
         graphics.DrawText(canvas, font, 15, 20, colour, convert_seconds(utilities.pomodoro_time))            
-        
+
+def change_colour():
+   time_colour,calendar_colour= execute_function_based_on_time()
+   return time_colour,calendar_colour
+    
+
 def convert_seconds(total_seconds):
   """Converts seconds to minutes and seconds in a formatted string."""
   minutes = int(total_seconds // 60)
   seconds = int(total_seconds % 60)
   return f"{minutes:02d}:{seconds:02d}"  # Formatted output with leading zeros
+
+
+def change_colour_for_0600_to_1200():
+    time_colour = graphics.Color(54, 54, 54)
+    calendar_colour = graphics.Color(54, 54, 54)
+    return time_colour,calendar_colour
+
+def change_colour_for_1200_to_1800():
+
+    time_colour = graphics.Color(215, 54, 101)
+    calendar_colour = graphics.Color(200, 50, 50) 
+    return time_colour,calendar_colour
+
+def change_colour_for_1800_to_0000():
+
+    time_colour = graphics.Color(199, 44, 137)
+    calendar_colour = graphics.Color(199, 50, 50)
+    return time_colour,calendar_colour
+
+def change_colour_for_0000_to_0600():
+
+    time_colour = graphics.Color(140, 29, 42)
+    calendar_colour = graphics.Color(140,29, 45)
+    return time_colour,calendar_colour
+
+def execute_function_based_on_time():
+    current_time = datetime.datetime.now().time()
+    time_colour = graphics.Color(215, 54, 101)
+    calendar_colour = graphics.Color(200, 50, 50)
+
+
+    time_ranges = [
+        ((5, 0), change_colour_for_0600_to_1200),
+        ((11, 0), change_colour_for_1200_to_1800),
+        ((17, 0), change_colour_for_1800_to_0000),
+        ((1, 0), change_colour_for_0000_to_0600)
+    ]
+    for start_time, func in time_ranges:
+        start_time_obj = datetime.time(*start_time)
+        end_time_obj = (datetime.datetime.combine(datetime.datetime.today(), start_time_obj) + datetime.timedelta(hours=6)).time()
+        if start_time_obj <= current_time <= end_time_obj:
+            time_colour,calendar_colour=func()
+            return time_colour,calendar_colour
+    else:
+        # print("No matching time range found.")
+        return time_colour,calendar_colour
