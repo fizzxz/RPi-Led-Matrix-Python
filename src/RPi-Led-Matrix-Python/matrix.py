@@ -160,5 +160,5 @@ def execute_function_based_on_time():
             time_colour,calendar_colour=func()
             return time_colour,calendar_colour
     else:
-        # print("No matching time range found.")
+        print("No matching time range found.")
         return time_colour,calendar_colour
