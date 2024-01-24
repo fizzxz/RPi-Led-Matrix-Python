@@ -12,7 +12,6 @@ def init():
     SHORT_BREAK_MIN = 5
     MINUTE = 60
     user_timers = {}
-    scene_type="clock"
     pomodoro_state=False
     pomodoro_time = 0
     

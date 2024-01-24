@@ -83,6 +83,8 @@ def matrix_display():
     print(weather_cond)
     thermometer.init()
     utilities.init()
+    # set default value to clock
+    utilities.scene_type = "clock"
  
     canvas = matrix.CreateFrameCanvas()
     while True:
@@ -95,8 +97,6 @@ def matrix_display():
             pomodoro_on_matrix(canvas,pomodoro_font,pomodoro_colour)
             break_time_on_matrix(canvas,break_font,break_colour)
         elif utilities.scene_type == "weather":   
-            pomodoro_on_matrix(canvas,pomodoro_font,pomodoro_colour)
-            break_time_on_matrix(canvas,break_font,break_colour)
             current_time = time_collector()
             graphics.DrawText(canvas, time_font, 4, 10, time_colour, current_time)
             weather_disp_text(canvas,weather_font,temperature_colour,weather_text,weather_cond)

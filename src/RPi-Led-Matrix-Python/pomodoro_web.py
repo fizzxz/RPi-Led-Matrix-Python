@@ -22,6 +22,7 @@ def start_pomodoro_sequence_route():
 @pomodoro_web_flask.route("/start_pomodoro", methods=["POST"])
 def start_pomodoro():
     start_timer_thread()
+    utilities.scene_type = "clock"
     user_id = request.remote_addr  # Use the user's IP address as a simple identifier
     duration = int(request.form["duration"])
 
@@ -38,6 +39,7 @@ def start_pomodoro():
 @pomodoro_web_flask.route("/start_break", methods=["POST"])
 def start_break():
     start_timer_thread()
+    utilities.scene_type = "clock"
     user_id = request.remote_addr
     duration = int(request.form["duration"])
 
@@ -68,7 +70,7 @@ def pause_timer():
 def resume_timer():
     user_id = request.remote_addr
     timer_data = utilities.user_timers.get(user_id)
-
+    utilities.scene_type = "clock"
     if timer_data and timer_data.get("paused", True):
         timer_data["paused"] = False
         return jsonify({"status": "Timer resumed."})
