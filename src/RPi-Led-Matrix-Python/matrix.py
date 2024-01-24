@@ -2,7 +2,7 @@ from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
 import datetime
 import thermometer
 import utilities
-
+from metoffice.metoffice import curr_weather_forecast
 # set matrix options
 options = RGBMatrixOptions()
 # options.chain_length = 1
@@ -73,6 +73,14 @@ def matrix_display():
     break_font.LoadFont(fonts[13])
     break_colour = graphics.Color(0, 0, 220)
  
+    weather_font = graphics.Font()
+    weather_font.LoadFont(fonts[3])
+    weather_text,weather_cond= curr_weather_forecast()
+    #  print(f"Temperature: {current_weather['T']}°C")
+    # print(f"Wind: {current_weather['D']} {current_weather['S']} mph")
+    # print(f"Conditions: {weather_cond}")
+    print(weather_text)
+    print(weather_cond)
     thermometer.init()
     utilities.init()
  
@@ -80,12 +88,26 @@ def matrix_display():
     while True:
         canvas.Clear()
         time_colour,calendar_colour=change_colour()
-        time_on_matrix(canvas,time_font, time_colour)
-        date_on_matrix(canvas,calendar_font, calendar_colour)
-        temperature_on_matrix(canvas,temperature_font, temperature_colour)
-        pomodoro_on_matrix(canvas,pomodoro_font,pomodoro_colour)
-        break_time_on_matrix(canvas,break_font,break_colour)
+        if utilities.scene_type == "clock":
+            time_on_matrix(canvas,time_font, time_colour)
+            date_on_matrix(canvas,calendar_font, calendar_colour)
+            temperature_on_matrix(canvas,temperature_font, temperature_colour)
+            pomodoro_on_matrix(canvas,pomodoro_font,pomodoro_colour)
+            break_time_on_matrix(canvas,break_font,break_colour)
+        elif utilities.scene_type == "weather":   
+            pomodoro_on_matrix(canvas,pomodoro_font,pomodoro_colour)
+            break_time_on_matrix(canvas,break_font,break_colour)
+            current_time = time_collector()
+            graphics.DrawText(canvas, time_font, 4, 10, time_colour, current_time)
+            weather_disp_text(canvas,weather_font,temperature_colour,weather_text,weather_cond)
+
         canvas = matrix.SwapOnVSync(canvas)
+
+def weather_disp_text(canvas, font, font_colour,weather_text,weather_cond):
+    graphics.DrawText(canvas,font,1, 20, font_colour, str(f"Outside: {weather_text['T']}°C"))
+    graphics.DrawText(canvas,font,1, 30, font_colour, str(f"Wind: {weather_text['D']} {weather_text['S']} mph"))
+    graphics.DrawText(canvas,font,1, 40, font_colour, str(f"{weather_cond}"))
+
 
 def temperature_on_matrix(canvas,temperature_font, temperature_colour):
     graphics.DrawText(canvas, temperature_font, 11, 57, temperature_colour, thermometer.roomTemp)
@@ -124,13 +146,11 @@ def change_colour_for_0600_to_1200():
     return time_colour,calendar_colour
 
 def change_colour_for_1200_to_1800():
-
     time_colour = graphics.Color(215, 54, 101)
     calendar_colour = graphics.Color(200, 50, 50) 
     return time_colour,calendar_colour
 
 def change_colour_for_1800_to_0000():
-
     time_colour = graphics.Color(199, 44, 137)
     calendar_colour = graphics.Color(199, 50, 50)
     return time_colour,calendar_colour
@@ -144,7 +164,6 @@ def execute_function_based_on_time():
     current_time = datetime.datetime.now().time()
     time_colour = graphics.Color(77, 154, 77)
     calendar_colour = graphics.Color(77, 154, 77)
-
 
     time_ranges = [
         ((5, 0), change_colour_for_0600_to_1200),
