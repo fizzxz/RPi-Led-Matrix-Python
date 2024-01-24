@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import threading
 from pomodoro_web import pomodoro_web_flask
-from pomodoro_timer import start_timer_thread
 from thermometer import updateTempThread
 from matrix import matrix_display
 
@@ -11,7 +10,7 @@ if __name__ == "__main__":
     # Set the thread as a daemon
     matrix_thread.daemon = True 
     matrix_thread.start()
-    # start_timer_thread()
+    
     temperature_thread = threading.Thread(target=updateTempThread)
     temperature_thread.start()
   
