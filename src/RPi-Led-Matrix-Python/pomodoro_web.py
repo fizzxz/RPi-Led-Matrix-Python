@@ -94,3 +94,13 @@ def get_timer_state():
     )
 
     return jsonify(timer_state)
+
+@pomodoro_web_flask.route("/set_weather_scene", methods=["GET"])
+def set_weather_scene():
+    utilities.scene_type="weather"
+    return jsonify({'status': 'Weather Scene Set.'})
+
+@pomodoro_web_flask.route("/set_clock_scene", methods=["GET"])
+def set_clock_scene():
+    utilities.scene_type="clock"
+    return jsonify({'status': 'Clock Scene Set.'})
