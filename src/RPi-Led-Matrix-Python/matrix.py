@@ -119,8 +119,8 @@ def convert_seconds(total_seconds):
 
 
 def change_colour_for_0600_to_1200():
-    time_colour = graphics.Color(54, 54, 54)
-    calendar_colour = graphics.Color(54, 54, 54)
+    time_colour = graphics.Color(140, 29, 42)
+    calendar_colour = graphics.Color(140,29, 45)
     return time_colour,calendar_colour
 
 def change_colour_for_1200_to_1800():
@@ -138,14 +138,12 @@ def change_colour_for_1800_to_0000():
 def change_colour_for_0000_to_0600():
     time_colour = graphics.Color(54, 54, 54)
     calendar_colour = graphics.Color(54, 54, 54)
-    #time_colour = graphics.Color(140, 29, 42)
-    #calendar_colour = graphics.Color(140,29, 45)
     return time_colour,calendar_colour
 
 def execute_function_based_on_time():
     current_time = datetime.datetime.now().time()
-    time_colour = graphics.Color(215, 54, 101)
-    calendar_colour = graphics.Color(200, 50, 50)
+    time_colour = graphics.Color(77, 154, 77)
+    calendar_colour = graphics.Color(77, 154, 77)
 
 
     time_ranges = [
