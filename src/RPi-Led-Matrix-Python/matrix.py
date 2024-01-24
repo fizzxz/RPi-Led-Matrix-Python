@@ -136,9 +136,10 @@ def change_colour_for_1800_to_0000():
     return time_colour,calendar_colour
 
 def change_colour_for_0000_to_0600():
-
-    time_colour = graphics.Color(140, 29, 42)
-    calendar_colour = graphics.Color(140,29, 45)
+    time_colour = graphics.Color(54, 54, 54)
+    calendar_colour = graphics.Color(54, 54, 54)
+    #time_colour = graphics.Color(140, 29, 42)
+    #calendar_colour = graphics.Color(140,29, 45)
     return time_colour,calendar_colour
 
 def execute_function_based_on_time():
