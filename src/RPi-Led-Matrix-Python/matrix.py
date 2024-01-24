@@ -74,7 +74,7 @@ def matrix_display():
     break_colour = graphics.Color(0, 0, 220)
  
     weather_font = graphics.Font()
-    weather_font.LoadFont(fonts[3])
+    weather_font.LoadFont(fonts[1])
     weather_text,weather_cond= curr_weather_forecast()
     #  print(f"Temperature: {current_weather['T']}°C")
     # print(f"Wind: {current_weather['D']} {current_weather['S']} mph")
