@@ -48,6 +48,10 @@
 <body>
 
     <h1>Pomodoro Timer</h1>
+    <div id="displayScenes">
+        <button id="weatherButton" onclick="set_weather_scene()">Set Weather Scene</button>
+        <button id="clockButton" onclick="set_clock_scene()">Set Clock Scene</button>
+    </div>
     <div id="statusDisplay"></div>
 
     <div id="startSequenceSection">
@@ -258,6 +262,58 @@
             document.getElementById('breakBtn').disabled = true;
             document.getElementById('startSequenceBtn').disabled = true;
             document.getElementById('pauseBtn').disabled = false;
+        }
+        function set_weather_scene() {
+            // Make a fetch request to call the set_weather_scene endpoint
+            fetch('http://192.168.50.127:5000/set_weather_scene', {
+                method: 'GET', // or 'GET' depending on your server setup
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Add any additional headers if required
+                },
+                // You can include a request body if needed
+                // body: JSON.stringify({ key: 'value' }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle the response data if needed
+                console.log(data);
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('Error:', error);
+            });
+        }
+        function set_clock_scene() {
+            // Make a fetch request to call the set_weather_scene endpoint
+            fetch('http://192.168.50.127:5000/set_clock_scene', {
+                method: 'GET', // or 'GET' depending on your server setup
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Add any additional headers if required
+                },
+                // You can include a request body if needed
+                // body: JSON.stringify({ key: 'value' }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle the response data if needed
+                console.log(data);
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('Error:', error);
+            });
         }
     </script>
 
