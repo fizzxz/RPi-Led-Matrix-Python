@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <!-- http://192.168.50.127:5000 -->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,29 +49,33 @@
 
     <h1>Pomodoro Timer</h1>
     <div id="statusDisplay"></div>
-    <button id="pomodoroBtn" onclick="
-            startTimer('start_pomodoro')
-            //<!-- updateTimerDisplay() -->
-        ">
-        Start Pomodoro
-    </button>
+
     <div id="startSequenceSection">
         <button id="startSequenceBtn" onclick="startPomodoroSequence()
         ">
             Start Pomodoro Sequence
         </button>
     </div>
-    <button id="breakBtn" onclick="
-    startTimer('start_break');
-    //<!-- updateTimerDisplay()-->
+    <div id="timerInput">
+        <button id="pomodoroBtn" onclick="
+    startTimer('start_pomodoro')
+    //<!-- updateTimerDisplay() -->
     ">
-        Start Break
-    </button>
+            Start Pomodoro
+        </button>
+        <button id="breakBtn" onclick="startTimer('start_break')">
+            Start Break
+        </button>
+        <label for="timeInput">Enter time in HH:MM:SS format:</label>
+        <input type="time" id="timeInput" step="1">
+    </div>
+
     <button id="pauseBtn" onclick="pauseTimer()">Pause Timer</button>
     <button id="resumeBtn" onclick="resumeTimer()">Resume Timer</button>
     <button id="removeTimerBtn" onclick="removeTimer()">Remove Timer</button>
     <div id="timerDisplay"></div>
 
+    <!-- <button onclick="getTimeInput()">Get Time Input</button> -->
     <script>
 
         var isTimerRunning = localStorage.getItem('isTimerRunning') === 'true';
@@ -97,7 +102,7 @@
                         isTimerRunning = true;
                         updateTimerDisplay();
                     })
-                    .catch(error => console.error('Error:', error));       
+                    .catch(error => console.error('Error:', error));
             }
         }
 
@@ -106,8 +111,23 @@
                 updateStatusDisplay('Timer is already running. Please wait for it to complete.');
                 return;
             }
+            var timeInput = document.getElementById("timeInput").value;
 
-            var duration = prompt("Enter timer duration in minutes:");
+            // Check if a valid time is entered
+            if (!isValidTimeFormat(timeInput)) {
+                alert("Invalid time format. Please enter in HH:MM:SS format.");
+                return;
+            }
+
+            var timeParts = timeInput.split(":");
+            // Set default values for missing fields
+            var hours = timeParts[0] || "00";
+            var minutes = timeParts[1] || "00";
+            var seconds = timeParts[2] || "00";
+
+            // Convert time to seconds
+            var duration = parseInt(hours, 10) * 3600 + parseInt(minutes, 10) * 60 + parseInt(seconds, 10);
+
 
             if (duration !== null && duration !== "") {
                 // Disable buttons during the timer
@@ -219,6 +239,11 @@
                     updateTimerDisplay();
                 })
                 .catch(error => console.error('Error:', error));
+        }
+        // Function to validate the time format
+        function isValidTimeFormat(input) {
+            var timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
+            return timeRegex.test(input);
         }
 
         function enableButtons() {

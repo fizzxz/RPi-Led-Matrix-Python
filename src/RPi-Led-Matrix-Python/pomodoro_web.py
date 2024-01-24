@@ -28,7 +28,7 @@ def start_pomodoro():
     if user_id not in utilities.user_timers:
         utilities.user_timers[user_id] = {
             "type": "pomodoro",
-            "remaining_time": duration * utilities.MINUTE,
+            "remaining_time": duration,
             "paused": False,
         }
     print(utilities.user_timers)
@@ -44,7 +44,7 @@ def start_break():
     if user_id not in utilities.user_timers:
         utilities.user_timers[user_id] = {
             "type": "break",
-            "remaining_time": duration * utilities.MINUTE,
+            "remaining_time": duration,
             "paused": False,
         }
     print(utilities.user_timers)
