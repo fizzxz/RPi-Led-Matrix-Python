@@ -11,7 +11,7 @@ def updateTempThread():
     global roomTemp
     while True:
         roomTemp = updateRoomTemp()     
-        print("Updated shared value:", roomTemp)
+        print("Updated roomTemp value:", roomTemp)
         time.sleep(60)
 
 def updateRoomTemp():
