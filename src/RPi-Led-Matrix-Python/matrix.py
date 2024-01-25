@@ -2,7 +2,8 @@ from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
 import datetime
 import thermometer
 import utilities
-from metoffice.metoffice import curr_weather_forecast
+from metoffice.metoffice import weather_dict,get_weather_data
+import threading
 # set matrix options
 options = RGBMatrixOptions()
 # options.chain_length = 1
@@ -26,7 +27,6 @@ options.pwm_lsb_nanoseconds = 220
 options.show_refresh_rate = False
 options.limit_refresh_rate_hz = 120
 matrix = RGBMatrix(options=options)
-
 fonts = [
     "fonts/tom-thumb.bdf",
     "fonts/4x6.bdf",
@@ -43,6 +43,11 @@ fonts = [
     "fonts/7x13.bdf",
     "fonts/7x14B.bdf",
 ]
+stop_thread_event = threading.Event()
+utilities.weather_data=get_weather_data()
+weather_text=utilities.weather_data["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]
+print(weather_text)
+weather_cond= weather_dict.get(int(weather_text['W']), "Unknown")
 
 def time_collector():
     current_time = datetime.datetime.now().strftime("%X")
@@ -53,6 +58,7 @@ def date_collector():
     return current_date
 
 def matrix_display():
+    global stop_thread_event
     temperature_font = graphics.Font()
     temperature_font.LoadFont(fonts[6])
     # temperature_colour = graphics.Color(20, 220, 50)
@@ -75,33 +81,44 @@ def matrix_display():
  
     weather_font = graphics.Font()
     weather_font.LoadFont(fonts[3])
- 
-    weather_text,weather_cond= curr_weather_forecast()
-    print(weather_text)
-    print(weather_cond)
     
     thermometer.init()
-    utilities.init()
-    # set default value to clock
     utilities.scene_type = "clock"
- 
+    weather_disp_thread = threading.Thread(target=weather_logic) 
     canvas = matrix.CreateFrameCanvas()
+    
     while True:
         canvas.Clear()
         time_colour,calendar_colour=change_colour()
         if utilities.scene_type == "clock":
+            stop_thread_event.clear()
+            if weather_disp_thread.is_alive():
+                stop_thread_event.set()
+                weather_disp_thread.join()
             time_on_matrix(canvas,time_font, time_colour)
             date_on_matrix(canvas,calendar_font, calendar_colour)
             temperature_on_matrix(canvas,temperature_font, temperature_colour)
             pomodoro_on_matrix(canvas,pomodoro_font,pomodoro_colour)
             break_time_on_matrix(canvas,break_font,break_colour)
             
-        elif utilities.scene_type == "weather":   
-            current_time = time_collector()
+        elif utilities.scene_type == "weather": 
+            current_time = time_collector() 
             graphics.DrawText(canvas, time_font, 4, 15, time_colour, current_time)
+            if not weather_disp_thread.is_alive():
+                weather_disp_thread = None
+                weather_disp_thread = threading.Thread(target=weather_logic)
+                weather_disp_thread.start()
             weather_disp_text(canvas,weather_font,temperature_colour,weather_text,weather_cond)
-
+            
         canvas = matrix.SwapOnVSync(canvas)
+
+def weather_logic():
+    global stop_thread_event,weather_text,weather_cond
+    while not stop_thread_event.is_set():
+        for i in range(len(utilities.weather_data["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"])):
+            weather_text = utilities.weather_data["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][i]
+            weather_cond= weather_dict.get(int(weather_text['W']), "Unknown")
+            stop_thread_event.wait(timeout=3)  
 
 def weather_disp_text(canvas, font, font_colour,weather_text,weather_cond):
     graphics.DrawText(canvas,font,1, 25, font_colour, str(f"T:{weather_text['T']}°C"))
