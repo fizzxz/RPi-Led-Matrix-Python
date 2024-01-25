@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import utilities
 import requests
 import json
 import time
@@ -43,7 +44,6 @@ weather_dict = {
     29: "Thunder shower (day)",
     30: "Thunder",
 }
-
 
 # Choose one of these site IDs provided here
 #url_fullSiteIDList=f"http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/json/sitelist?key={api_key}"
@@ -93,10 +93,10 @@ def print_weather_data(data):
     print(f"Wind: {current_weather['D']} {current_weather['S']} mph")
     print(f"Conditions: {weather_cond}")
 
-def curr_weather_forecast():
-    data=get_weather_data()
-    current_weather = data["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]
-    weather_cond=weather_dict.get(int(current_weather['W']), "Unknown")
-    return current_weather,weather_cond
+def get_weather_forecast():
+    while True:
+        utilities.weather_data = get_weather_data()
+        time.sleep(10800)
+
     
     
