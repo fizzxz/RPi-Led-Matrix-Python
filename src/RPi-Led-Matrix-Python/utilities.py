@@ -3,6 +3,7 @@ def init():
     global pomodoro_state
     global pomodoro_time
     global scene_type
+    global weather_data
     global POMODORO_DEFAULT_TIME
     global LONG_BREAK_MIN
     global SHORT_BREAK_MIN
