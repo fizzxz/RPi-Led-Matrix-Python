@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pomodoro Timer</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -79,13 +80,26 @@
     <button id="removeTimerBtn" onclick="removeTimer()">Remove Timer</button>
     <div id="timerDisplay"></div>
 
-    <!-- <button onclick="getTimeInput()">Get Time Input</button> -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
 
         var isTimerRunning = localStorage.getItem('isTimerRunning') === 'true';
         var timerType = localStorage.getItem('timerType');
         var remainingTime = parseInt(localStorage.getItem('remainingTime')) || 0;
         window.onload = updateTimerDisplay()
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Flatpickr for the time input
+            flatpickr("#timeInput", {
+                enableTime: true,
+                noCalendar: true,
+                enableSeconds: true,
+                time_24hr:true,
+                //<!-- dateFormat: "H:i:S", -->
+                altFormat: "H:i:S", // Display format in the input field
+                altInput: true, 
+                // You can customize more options based on your needs
+            });
+        });
         function startPomodoroSequence() {
             if (isTimerRunning) {
                 updateStatusDisplay('Timer is already running. Please wait for it to complete.');
@@ -274,20 +288,20 @@
                 // You can include a request body if needed
                 // body: JSON.stringify({ key: 'value' }),
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Handle the response data if needed
-                console.log(data);
-            })
-            .catch(error => {
-                // Handle errors
-                console.error('Error:', error);
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Handle the response data if needed
+                    console.log(data);
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error('Error:', error);
+                });
         }
         function set_clock_scene() {
             // Make a fetch request to call the set_weather_scene endpoint
@@ -300,20 +314,20 @@
                 // You can include a request body if needed
                 // body: JSON.stringify({ key: 'value' }),
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Handle the response data if needed
-                console.log(data);
-            })
-            .catch(error => {
-                // Handle errors
-                console.error('Error:', error);
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Handle the response data if needed
+                    console.log(data);
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error('Error:', error);
+                });
         }
     </script>
 
