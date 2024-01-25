@@ -74,15 +74,12 @@ def matrix_display():
     break_colour = graphics.Color(0, 0, 220)
  
     weather_font = graphics.Font()
-    weather_font.LoadFont(fonts[5])
-    weather_cond_font = graphics.Font()
-    weather_cond_font.LoadFont(fonts[3])
+    weather_font.LoadFont(fonts[3])
+ 
     weather_text,weather_cond= curr_weather_forecast()
-    #  print(f"Temperature: {current_weather['T']}°C")
-    # print(f"Wind: {current_weather['D']} {current_weather['S']} mph")
-    # print(f"Conditions: {weather_cond}")
     print(weather_text)
     print(weather_cond)
+    
     thermometer.init()
     utilities.init()
     # set default value to clock
@@ -98,29 +95,28 @@ def matrix_display():
             temperature_on_matrix(canvas,temperature_font, temperature_colour)
             pomodoro_on_matrix(canvas,pomodoro_font,pomodoro_colour)
             break_time_on_matrix(canvas,break_font,break_colour)
+            
         elif utilities.scene_type == "weather":   
             current_time = time_collector()
             graphics.DrawText(canvas, time_font, 4, 15, time_colour, current_time)
-            weather_disp_text(canvas,weather_font,temperature_colour,weather_text,weather_cond,weather_cond_font)
+            weather_disp_text(canvas,weather_font,temperature_colour,weather_text,weather_cond)
 
         canvas = matrix.SwapOnVSync(canvas)
 
-def weather_disp_text(canvas, font, font_colour,weather_text,weather_cond,weather_cond_font):
+def weather_disp_text(canvas, font, font_colour,weather_text,weather_cond):
     graphics.DrawText(canvas,font,1, 25, font_colour, str(f"T:{weather_text['T']}°C"))
-    graphics.DrawText(canvas,font,1, 35, font_colour, str(f"W: {weather_text['D']} {weather_text['S']} mph"))
+    graphics.DrawText(canvas,font,1, 35, font_colour, str(f"W:{weather_text['D']} {weather_text['S']}mph"))
     split_weather_cond=weather_cond.split()
     if len(split_weather_cond)>=1:
-        graphics.DrawText(canvas,weather_cond_font,1, 44, font_colour, str(f"{split_weather_cond[0]}"))
+        graphics.DrawText(canvas,font,1, 44, font_colour, str(f"{split_weather_cond[0]}"))
     if len(split_weather_cond) >= 2:
-        graphics.DrawText(canvas,weather_cond_font,35, 44, font_colour, str(f"{split_weather_cond[1]}"))
+        graphics.DrawText(canvas,font,35, 44, font_colour, str(f"{split_weather_cond[1]}"))
     if len(split_weather_cond) >= 3:
-        graphics.DrawText(canvas,weather_cond_font,1, 52, font_colour, str(f"{split_weather_cond[2]}"))
+        graphics.DrawText(canvas,font,1, 52, font_colour, str(f"{split_weather_cond[2]}"))
     if len(split_weather_cond) >= 4:
-        graphics.DrawText(canvas,weather_cond_font,1, 62, font_colour, str(f"{split_weather_cond[3]}"))
+        graphics.DrawText(canvas,font,1, 60, font_colour, str(f"{split_weather_cond[3]}"))
         
-        
-
-
+    
 def temperature_on_matrix(canvas,temperature_font, temperature_colour):
     graphics.DrawText(canvas, temperature_font, 11, 57, temperature_colour, thermometer.roomTemp)
 
