@@ -121,7 +121,9 @@ def weather_logic():
             stop_thread_event.wait(timeout=3)  
 
 def weather_disp_text(canvas, font, font_colour,weather_text,weather_cond):
-    graphics.DrawText(canvas,font,1, 25, font_colour, str(f"T:{weather_text['T']}°C"))
+    graphics.DrawText(canvas,font,1, 25, font_colour, str(f"{weather_text['T']}°C"))
+    
+    graphics.DrawText(canvas,font,35,25,font_colour,str(f"{convert_minutes_to_hh_mm(int(weather_text['$']))}"))
     graphics.DrawText(canvas,font,1, 35, font_colour, str(f"W:{weather_text['D']} {weather_text['S']}mph"))
     split_weather_cond=weather_cond.split()
     if len(split_weather_cond)>=1:
@@ -164,6 +166,24 @@ def convert_seconds(total_seconds):
   seconds = int(total_seconds % 60)
   return f"{minutes:02d}:{seconds:02d}"  # Formatted output with leading zeros
 
+def convert_minutes_to_hh_mm(minutes):
+  """
+  Converts minutes to hours and minutes in HH:MM format.
+
+  Args:
+    minutes: An integer representing the number of minutes.
+
+  Returns:
+    A string in HH:MM format representing the converted time.
+  """
+  hours = minutes // 60
+  minutes = minutes % 60
+
+  # Add leading zero if minutes are less than 10
+  if minutes < 10:
+    minutes = f"0{minutes}"
+
+  return f"{hours}:{minutes}"
 
 def change_colour_for_0600_to_1200():
     time_colour = graphics.Color(140, 29, 42)
