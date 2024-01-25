@@ -11,7 +11,6 @@ utilities.init()
 def index():
     return render_template("timer.html")
 
-# Start the timer sequence when the button is pressed
 @pomodoro_web_flask.route('/start_pomodoro_sequence', methods=['POST'])
 def start_pomodoro_sequence_route():
     user_id = request.remote_addr  # Use the user's IP address as a simple identifier
@@ -34,7 +33,6 @@ def start_pomodoro():
         }
     print(utilities.user_timers)
     return jsonify({"status": "Pomodoro started."})
-
 
 @pomodoro_web_flask.route("/start_break", methods=["POST"])
 def start_break():
@@ -64,8 +62,6 @@ def pause_timer():
         print(timer_data)
         return jsonify({"status": "No timer to pause."})
 
-
-# Add a new route for resuming the timer
 @pomodoro_web_flask.route("/resume_timer", methods=["POST"])
 def resume_timer():
     user_id = request.remote_addr
@@ -81,7 +77,6 @@ def resume_timer():
 def remove_timer():
     user_id = request.remote_addr
     timer_data = utilities.user_timers.get(user_id)
-    # Remove the timer for the specified user
     if user_id in utilities.user_timers:
         timer_data["remaining_time"] = 0
         return jsonify({'status': 'Timer removed.'})
