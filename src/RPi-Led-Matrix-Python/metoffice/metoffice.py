@@ -97,6 +97,3 @@ def get_weather_forecast():
     while True:
         utilities.weather_data = get_weather_data()
         time.sleep(10800)
-
-    
-    

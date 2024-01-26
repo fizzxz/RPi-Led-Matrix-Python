@@ -15,4 +15,3 @@ def init():
     user_timers = {}
     pomodoro_state=False
     pomodoro_time = 0
-    

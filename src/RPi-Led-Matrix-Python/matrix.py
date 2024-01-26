@@ -4,6 +4,7 @@ import thermometer
 import utilities
 from metoffice.metoffice import weather_dict,get_weather_data
 import threading
+
 # set matrix options
 options = RGBMatrixOptions()
 # options.chain_length = 1
@@ -134,7 +135,6 @@ def weather_disp_text(canvas, font, font_colour,weather_text,weather_cond):
     if len(split_weather_cond) >= 4:
         graphics.DrawText(canvas,font,1, 60, font_colour, str(f"{split_weather_cond[3]}"))
         
-    
 def temperature_on_matrix(canvas,temperature_font, temperature_colour):
     graphics.DrawText(canvas, temperature_font, 11, 57, temperature_colour, thermometer.roomTemp)
 
@@ -157,7 +157,6 @@ def break_time_on_matrix(canvas,font,colour):
 def change_colour():
    time_colour,calendar_colour= execute_function_based_on_time()
    return time_colour,calendar_colour
-    
 
 def convert_seconds(total_seconds):
   """Converts seconds to minutes and seconds in a formatted string."""

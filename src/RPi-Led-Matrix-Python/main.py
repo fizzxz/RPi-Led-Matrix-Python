@@ -18,7 +18,6 @@ if __name__ == "__main__":
     matrix_thread.daemon = True 
     matrix_thread.start()
     
-    
     pomodoro_web_flask.run(host="0.0.0.0", port=5000, threaded=True, debug=False)
 
     if not matrix_thread.process():
