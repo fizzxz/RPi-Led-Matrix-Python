@@ -46,7 +46,6 @@ fonts = [
 stop_thread_event = threading.Event()
 utilities.weather_data=get_weather_data()
 weather_text=utilities.weather_data["SiteRep"]["DV"]["Location"]["Period"][0]["Rep"][0]
-print(weather_text)
 weather_cond= weather_dict.get(int(weather_text['W']), "Unknown")
 
 def time_collector():
