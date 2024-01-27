@@ -64,7 +64,6 @@
     <div id="timerInput">
         <button id="pomodoroBtn" onclick="
     startTimer('start_pomodoro')
-    //<!-- updateTimerDisplay() -->
     ">
             Start Pomodoro
         </button>
@@ -86,17 +85,16 @@
         var isTimerRunning = localStorage.getItem('isTimerRunning') === 'true';
         var timerType = localStorage.getItem('timerType');
         var remainingTime = parseInt(localStorage.getItem('remainingTime')) || 0;
-        window.onload = updateTimerDisplay()
         document.addEventListener('DOMContentLoaded', function () {
             // Initialize Flatpickr for the time input
             flatpickr("#timeInput", {
                 enableTime: true,
                 noCalendar: true,
                 enableSeconds: true,
-                time_24hr:true,
+                time_24hr: true,
                 //<!-- dateFormat: "H:i:S", -->
                 altFormat: "H:i:S", // Display format in the input field
-                altInput: true, 
+                altInput: true,
                 // You can customize more options based on your needs
             });
         });
@@ -185,42 +183,6 @@
             }
         }
 
-        function updateTimerDisplay() {
-            var timerDisplay = document.getElementById('timerDisplay');
-
-            var intervalId = setInterval(function () {
-
-                fetch('http://192.168.50.127:5000/get_timer_state')
-                    .then(response => response.json())
-                    .then(timerState => {
-                        var minutes = Math.floor(timerState.remaining_time / 60);
-                        var seconds = timerState.remaining_time % 60;
-                        disableButtons()
-                        if (timerState.paused) {
-                            timerDisplay.innerHTML = "Timer paused.";
-                            document.getElementById('pauseBtn').disabled = true;
-                            document.getElementById('resumeBtn').disabled = false;
-                            isTimerRunning = false;
-                        } else {
-                            timerDisplay.innerHTML = `Time remaining: ${minutes} minutes ${seconds} seconds`;
-                            isTimerRunning = true;
-                            document.getElementById('resumeBtn').disabled = true;
-                        }
-
-                        if (timerState.remaining_time <= 0) {
-                            clearInterval(intervalId);
-                            timerDisplay.innerHTML = "No running timer.";
-                            isTimerRunning = false;
-                            enableButtons();
-                            document.getElementById('resumeBtn').disabled = true;
-                            return;
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-
-            }, 1000);
-
-        }
 
         function updateStatusDisplay(message) {
             var statusDisplay = document.getElementById('statusDisplay');
@@ -254,7 +216,8 @@
                 .then(data => {
                     updateStatusDisplay(data.status);
                     isTimerRunning = false;
-                    updateTimerDisplay();
+                    enableButtons()
+                    timerDisplay.innerHTML = "No running timer.";
                 })
                 .catch(error => console.error('Error:', error));
         }
@@ -283,10 +246,7 @@
                 method: 'GET', // or 'GET' depending on your server setup
                 headers: {
                     'Content-Type': 'application/json',
-                    // Add any additional headers if required
                 },
-                // You can include a request body if needed
-                // body: JSON.stringify({ key: 'value' }),
             })
                 .then(response => {
                     if (!response.ok) {
@@ -309,10 +269,7 @@
                 method: 'GET', // or 'GET' depending on your server setup
                 headers: {
                     'Content-Type': 'application/json',
-                    // Add any additional headers if required
                 },
-                // You can include a request body if needed
-                // body: JSON.stringify({ key: 'value' }),
             })
                 .then(response => {
                     if (!response.ok) {
@@ -330,7 +287,45 @@
                 });
         }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
 
+    <script>
+        // Connect to the SocketIO server
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        // Function to get timer state
+        function updateTimerDisplay() {
+            socket.emit('get_timer_state');
+        }
+
+        // Listen for timer state updates
+        socket.on('timer_state', function (timerState) {
+            timerState = timerState[0]
+            var minutes = Math.floor(timerState.remaining_time / 60);
+            var seconds = timerState.remaining_time % 60;
+            disableButtons()
+
+            if (timerState.paused) {
+                timerDisplay.innerHTML = "Timer paused.";
+                document.getElementById('pauseBtn').disabled = true;
+                document.getElementById('resumeBtn').disabled = false;
+                isTimerRunning = false;
+            } else {
+                timerDisplay.innerHTML = `Time remaining: ${minutes} minutes ${seconds} seconds`;
+                isTimerRunning = true;
+                document.getElementById('resumeBtn').disabled = true;
+            }
+
+            if (timerState.remaining_time <= 0) {
+                timerDisplay.innerHTML = "No running timer.";
+                isTimerRunning = false;
+                enableButtons();
+                document.getElementById('resumeBtn').disabled = true;
+                return;
+            }
+        });
+
+    </script>
 </body>
 
 </html>
