@@ -4,6 +4,7 @@ import thermometer
 import utilities
 from metoffice.metoffice import weather_dict,get_weather_data
 import threading
+import time
 
 # set matrix options
 options = RGBMatrixOptions()
@@ -85,11 +86,14 @@ def matrix_display():
     thermometer.init()
     utilities.scene_type = "clock"
     weather_disp_thread = threading.Thread(target=weather_logic) 
+    weather_timed_disp_thread = threading.Thread(target=weather_timed_display) 
     canvas = matrix.CreateFrameCanvas()
     
     while True:
         canvas.Clear()
         time_colour,calendar_colour=change_colour()
+        if is_current_time_ends_in_30_or_00() and weather_timed_disp_thread.is_alive() is False:
+            weather_timed_disp_thread.start()
         if utilities.scene_type == "clock":
             stop_thread_event.clear()
             if weather_disp_thread.is_alive():
@@ -223,3 +227,18 @@ def execute_function_based_on_time():
     else:
         # print("No matching time range found.")
         return time_colour,calendar_colour
+    
+def weather_timed_display():
+        while True:
+            if utilities.pomodoro_state is False:
+                utilities.scene_type = "weather"
+                time.sleep(30)
+                utilities.scene_type = "clock"
+            time.sleep(1800)
+    
+def is_current_time_ends_in_30_or_00():
+    current_time = datetime.datetime.now().time()
+    minutes = current_time.minute
+
+    # Check if the current time ends in :30 or :00
+    return minutes == 30 or minutes == 0
