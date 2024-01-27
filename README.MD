@@ -10,7 +10,8 @@ A Python project for the Rasbperry Pi 3B+ Requiring:
 ## What it displays
 - Shows time, date and temperature by default.
 - Can show a configurable pomodoro timer from the localhosted website.
-- Show todays weather UK (using a free metoffice/datapoint api key)
+- Show todays weather in the UK
+    (using a free metoffice/datapoint api key)
     - Create a file under src/RPI-Led-Matrix-Python/env with the variables:
         - METOFFICE_KEY={api_key}
         - SITE_ID={siteID}
