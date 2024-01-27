@@ -300,11 +300,11 @@
 
         // Listen for timer state updates
         socket.on('timer_state', function (timerState) {
-            timerState = timerState[0]
+            timerState=timerState[0]
             var minutes = Math.floor(timerState.remaining_time / 60);
             var seconds = timerState.remaining_time % 60;
             disableButtons()
-
+            
             if (timerState.paused) {
                 timerDisplay.innerHTML = "Timer paused.";
                 document.getElementById('pauseBtn').disabled = true;
@@ -315,8 +315,8 @@
                 isTimerRunning = true;
                 document.getElementById('resumeBtn').disabled = true;
             }
-
-            if (timerState.remaining_time <= 0) {
+            
+            if (timerState.remaining_time <= 1) {
                 timerDisplay.innerHTML = "No running timer.";
                 isTimerRunning = false;
                 enableButtons();
