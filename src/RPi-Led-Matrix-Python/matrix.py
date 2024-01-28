@@ -234,11 +234,19 @@ def weather_timed_display():
                 utilities.scene_type = "weather"
                 time.sleep(30)
                 utilities.scene_type = "clock"
-            time.sleep(1800)
+            sleepVal=seconds_until_next_thirty_min()
+            time.sleep(sleepVal)       
     
 def is_current_time_ends_in_30_or_00():
     current_time = datetime.datetime.now().time()
     minutes = current_time.minute
-
     # Check if the current time ends in :30 or :00
     return minutes == 30 or minutes == 0
+
+def seconds_until_next_thirty_min():
+    now = datetime.datetime.now()
+    next_thirty_min = now.replace(minute=30, second=0, microsecond=0)
+    if now >= next_thirty_min:
+        next_thirty_min += datetime.timedelta(minutes=30)
+    seconds_until_next_thirty_min = (next_thirty_min - now).total_seconds()
+    return seconds_until_next_thirty_min
