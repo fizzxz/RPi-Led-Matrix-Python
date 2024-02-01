@@ -94,6 +94,10 @@ def print_weather_data(data):
     print(f"Conditions: {weather_cond}")
 
 def get_weather_forecast():
+    #sleep for 3 minutes
+    #when rebooting rpi time is incorrect at initial boot
+    #wait for wifi to connect and time sync to occur
+    time.sleep(180) 
     while True:
         utilities.weather_data = get_weather_data()
         time.sleep(10800)
